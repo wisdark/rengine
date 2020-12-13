@@ -2,8 +2,8 @@
 name: "\U0001F680 Feature request"
 about: Suggest an idea for this project
 title: Feature - Your Awesome feature title
-labels: features
-assignees: ''
+labels: feature_request
+assignees: 'yogeshojha'
 
 ---
 
