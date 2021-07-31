@@ -9,6 +9,7 @@ import tldextract
 
 
 from celery import shared_task
+from discord_webhook import DiscordWebhook
 from reNgine.celery import app
 from startScan.models import ScanHistory, ScannedHost, ScanActivity, WayBackEndPoint, VulnerabilityScan
 from targetApp.models import Domain
@@ -132,10 +133,12 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
 
                 if 'amass-passive' in tools:
                     amass_command = AMASS_COMMAND + \
-                        ' -passive -d {} -o {}/from_amass.txt'.format(domain.domain_name, current_scan_dir)
+                        ' -passive -d {} -o {}/from_amass.txt'.format(
+                            domain.domain_name, current_scan_dir)
                     if amass_config_path:
                         amass_command = amass_command + \
-                            ' -config {}'.format(settings.TOOL_LOCATION + 'scan_results/' + amass_config_path)
+                            ' -config {}'.format(settings.TOOL_LOCATION +
+                                                 'scan_results/' + amass_config_path)
 
                     # Run Amass Passive
                     logging.info(amass_command)
@@ -143,7 +146,8 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
 
                 if 'amass-active' in tools:
                     amass_command = AMASS_COMMAND + \
-                        ' -active -d {} -o {}/from_amass_active.txt'.format(domain.domain_name, current_scan_dir)
+                        ' -active -d {} -o {}/from_amass_active.txt'.format(
+                            domain.domain_name, current_scan_dir)
 
                     if AMASS_WORDLIST in yaml_configuration[SUBDOMAIN_DISCOVERY]:
                         wordlist = yaml_configuration[SUBDOMAIN_DISCOVERY][AMASS_WORDLIST]
@@ -157,7 +161,8 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                             ' -brute -w {}'.format(wordlist_path)
                     if amass_config_path:
                         amass_command = amass_command + \
-                            ' -config {}'.format(settings.TOOL_LOCATION + 'scan_results/' + amass_config_path)
+                            ' -config {}'.format(settings.TOOL_LOCATION +
+                                                 'scan_results/' + amass_config_path)
 
                     # Run Amass Active
                     logging.info(amass_command)
@@ -311,11 +316,14 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
             try:
                 sub_domain = ScannedHost.objects.get(
                     scan_history=task, subdomain=json_st['url'].split("//")[-1])
-                sub_domain.http_url = json_st['url']
-                sub_domain.http_status = json_st['status-code']
-                sub_domain.page_title = json_st['title']
-                sub_domain.content_length = json_st['content-length']
-                sub_domain.discovered_date = timezone.now()
+                if 'url' in json_st:
+                    sub_domain.http_url = json_st['url']
+                if 'status-code' in json_st:
+                    sub_domain.http_status = json_st['status-code']
+                if 'title' in json_st:
+                    sub_domain.page_title = json_st['title']
+                if 'content-length' in json_st:
+                    sub_domain.content_length = json_st['content-length']
                 if 'ip' in json_st:
                     sub_domain.ip_address = json_st['ip']
                 if 'cdn' in json_st:
@@ -323,6 +331,7 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                 if 'cnames' in json_st:
                     cname_list = ','.join(json_st['cnames'])
                     sub_domain.cname = cname_list
+                sub_domain.discovered_date = timezone.now()
                 sub_domain.save()
                 alive_file.write(json_st['url'] + '\n')
             except Exception as exception:
@@ -415,18 +424,25 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
 
             # check the yaml_configuration and choose the ports to be scanned
 
-            scan_ports = 'top-100'  # default port scan
+            scan_ports = '-'  # default port scan everything
             if PORTS in yaml_configuration[PORT_SCAN]:
-                scan_ports = ','.join(
-                    str(port) for port in yaml_configuration[PORT_SCAN][PORTS])
-
-            # TODO: New version of naabu has -p instead of -ports
-            if scan_ports:
-                naabu_command = 'cat {} | naabu -json -o {} -ports {}'.format(
-                    subdomain_scan_results_file, port_results_file, scan_ports)
-            else:
-                naabu_command = 'cat {} | naabu -json -o {}'.format(
-                    subdomain_scan_results_file, port_results_file)
+                # TODO:  legacy code, remove top-100 in future versions
+                all_ports = yaml_configuration[PORT_SCAN][PORTS]
+                print(all_ports)
+                if 'full' in all_ports:
+                    naabu_command = 'cat {} | naabu -json -o {} -p {}'.format(
+                        subdomain_scan_results_file, port_results_file, '-')
+                elif 'top-100' in all_ports:
+                    naabu_command = 'cat {} | naabu -json -o {} -top-ports 100'.format(
+                        subdomain_scan_results_file, port_results_file)
+                elif 'top-1000' in all_ports:
+                    naabu_command = 'cat {} | naabu -json -o {} -top-ports 1000'.format(
+                        subdomain_scan_results_file, port_results_file)
+                else:
+                    scan_ports = ','.join(
+                        str(port) for port in all_ports)
+                    naabu_command = 'cat {} | naabu -json -o {} -p {}'.format(
+                        subdomain_scan_results_file, port_results_file, scan_ports)
 
             # check for exclude ports
             if EXCLUDE_PORTS in yaml_configuration[PORT_SCAN] and yaml_configuration[PORT_SCAN][EXCLUDE_PORTS]:
@@ -435,15 +451,15 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                 naabu_command = naabu_command + \
                     ' -exclude-ports {}'.format(exclude_ports)
 
-            # TODO thread is removed in later versio of naabu, replace with rate :(
-            # if THREAD in yaml_configuration[PORT_SCAN] and yaml_configuration[PORT_SCAN][THREAD] > 0:
-            #     naabu_command = naabu_command + \
-            #         ' -t {}'.format(
-            #             yaml_configuration['subdomain_discovery']['thread'])
-            # else:
-            #     naabu_command = naabu_command + ' -t 10'
+            if NAABU_RATE in yaml_configuration[PORT_SCAN] and yaml_configuration[PORT_SCAN][NAABU_RATE] > 0:
+                naabu_command = naabu_command + \
+                    ' -rate {}'.format(
+                        yaml_configuration[PORT_SCAN][NAABU_RATE])
+            else:
+                naabu_command = naabu_command + ' -t 10'
 
             # run naabu
+            print(naabu_command)
             os.system(naabu_command)
 
             # writing port results
@@ -572,10 +588,14 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                                 json_st = json.loads(line.strip())
                                 endpoint = WayBackEndPoint()
                                 endpoint.url_of = task
-                                endpoint.http_url = json_st['url']
-                                endpoint.content_length = json_st['content-length']
-                                endpoint.http_status = json_st['status-code']
-                                endpoint.page_title = json_st['title']
+                                if 'url' in json_st:
+                                    endpoint.http_url = json_st['url']
+                                if 'content-length' in json_st:
+                                    endpoint.content_length = json_st['content-length']
+                                if 'status-code' in json_st:
+                                    endpoint.http_status = json_st['status-code']
+                                if 'title' in json_st:
+                                    endpoint.page_title = json_st['title']
                                 endpoint.discovered_date = timezone.now()
                                 if 'content-type' in json_st:
                                     endpoint.content_type = json_st['content-type']
@@ -593,13 +613,17 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                     json_st = json.loads(line.strip())
                     endpoint = WayBackEndPoint()
                     endpoint.url_of = task
-                    endpoint.http_url = json_st['url']
-                    endpoint.content_length = json_st['content-length']
-                    endpoint.http_status = json_st['status-code']
-                    endpoint.page_title = json_st['title']
-                    endpoint.discovered_date = timezone.now()
+                    if 'url' in json_st:
+                        endpoint.http_url = json_st['url']
+                    if 'content-length' in json_st:
+                        endpoint.content_length = json_st['content-length']
+                    if 'status-code' in json_st:
+                        endpoint.http_status = json_st['status-code']
+                    if 'title' in json_st:
+                        endpoint.page_title = json_st['title']
                     if 'content-type' in json_st:
                         endpoint.content_type = json_st['content-type']
+                    endpoint.discovered_date = timezone.now()
                     endpoint.save()
 
         '''
@@ -694,22 +718,28 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                         _subdomain = ScannedHost.objects.get(
                             subdomain=subdomain, scan_history=task)
                         vulnerability.host = _subdomain
-                        vulnerability.name = json_st['name']
-                        vulnerability.url = json_st['matched']
-                        if json_st['severity'] == 'info':
-                            severity = 0
-                        elif json_st['severity'] == 'low':
-                            severity = 1
-                        elif json_st['severity'] == 'medium':
-                            severity = 2
-                        elif json_st['severity'] == 'high':
-                            severity = 3
-                        elif json_st['severity'] == 'critical':
-                            severity = 4
+                        if 'name' in json_st['info']:
+                            vulnerability.name = json_st['info']['name']
+                        if 'severity' in json_st['info']:
+                            if json_st['info']['severity'] == 'info':
+                                severity = 0
+                            elif json_st['info']['severity'] == 'low':
+                                severity = 1
+                            elif json_st['info']['severity'] == 'medium':
+                                severity = 2
+                            elif json_st['info']['severity'] == 'high':
+                                severity = 3
+                            elif json_st['info']['severity'] == 'critical':
+                                severity = 4
+                            else:
+                                severity = 0
                         else:
                             severity = 0
                         vulnerability.severity = severity
-                        vulnerability.template_used = json_st['template']
+                        if 'matched' in json_st:
+                            vulnerability.url = json_st['matched']
+                        if 'templateID' in json_st:
+                            vulnerability.template_used = json_st['templateID']
                         if 'description' in json_st:
                             vulnerability.description = json_st['description']
                         if 'matcher_name' in json_st:
@@ -719,10 +749,10 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
                         vulnerability.save()
                         send_notification(
                             "ALERT! {} vulnerability with {} severity identified in {} \n Vulnerable URL: {}".format(
-                                json_st['name'], json_st['severity'], domain.domain_name, json_st['matched']))
+                                json_st['info']['name'], json_st['info']['severity'], domain.domain_name, json_st['matched']))
             except Exception as exception:
                 print('-' * 30)
-                print(exception)
+                print(traceback.format_exc())
                 print('-' * 30)
                 update_last_activity(activity_id, 0)
         '''
@@ -742,15 +772,18 @@ def doScan(domain_id, scan_history_id, scan_type, engine_type):
 
 def send_notification(message):
     notif_hook = NotificationHooks.objects.filter(send_notif=True)
-    # notify on slack
-    scan_status_msg = {
-        'text': message}
+    scan_status_msg = {}
     headers = {'content-type': 'application/json'}
     for notif in notif_hook:
-        requests.post(
-            notif.hook_url,
-            data=json.dumps(scan_status_msg),
-            headers=headers)
+        if 'slack.com' in notif.hook_url:
+            scan_status_msg['text'] = message
+            requests.post(
+                notif.hook_url,
+                data=json.dumps(scan_status_msg),
+                headers=headers)
+        elif 'discordapp.com' in notif.hook_url:
+            webhook = DiscordWebhook(url=notif.hook_url, content=message)
+            webhook.execute()
 
 
 def scan_failed(task):
