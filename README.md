@@ -1,115 +1,222 @@
-<br />
 <p align="center">
-  <a href="https://github.com/yogeshojha/rengine">
-    <img src="https://raw.githubusercontent.com/yogeshojha/rengine/master/static/img/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
-  <h3 align="center">reNgine</h3>
+<a href="https://rengine.wiki"><img src=".github/screenshots/banner.gif" alt=""/></a>
 </p>
 
-![Version](https://img.shields.io/badge/version-0.4-blue.svg?cacheSeconds=2592000)
-[![first-timers](https://img.shields.io/badge/first--timers--only-friendly-blue.svg?style=flat-square)](https://www.firsttimersonly.com/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![python](https://img.shields.io/badge/python-3.8-blue.svg?logo=python&labelColor=yellow)](https://www.python.org/downloads/)
-[![platform](https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-green.svg)](https://github.com/yogeshojha/rengine/)
-![GitHub issues](https://img.shields.io/github/issues/yogeshojha/rengine)
-![reNgine CI test](https://github.com/yogeshojha/rengine/workflows/reNgine%20CI%20test/badge.svg)
+<p align="center"><a href="https://github.com/yogeshojha/rengine/releases" target="_blank"><img src="https://img.shields.io/badge/version-v1.0.1-informational?&logo=none" alt="reNgine Latest Version" /></a>&nbsp;<a href="https://www.gnu.org/licenses/gpl-3.0" target="_blank"><img src="https://img.shields.io/badge/License-GPLv3-red.svg?&logo=none" alt="License" /></a>&nbsp;<a href="https://github.com/yogeshojha/rengine/issues" target="_blank"><img src="https://img.shields.io/github/issues/yogeshojha/rengine?color=red&logo=none" alt="reNgine Issues" /></a>&nbsp;<a href="#" target="_blank"><img src="https://img.shields.io/badge/first--timers--only-friendly-blue.svg?&logo=none" alt="" /></a>&nbsp;<a href="https://huntr.dev/bounties/disclose/?target=https%3A%2F%2Fgithub.com%2Fyogeshojha%2Frengine" target="_blank"><img src="https://cdn.huntr.dev/huntr_security_badge_mono.svg" alt="" /></a>&nbsp;</p>
+
+
+<p align="center"><a href="https://www.youtube.com/watch?v=A1oNOIc0h5A" target="_blank"><img src="https://img.shields.io/badge/Black--Hat--Arsenal-Europe--2020-blue.svg?&logo=none" alt="" /></a>&nbsp;<a href="https://www.youtube.com/watch?v=7uvP6MaQOX0" target="_blank"><img src="https://img.shields.io/badge/Black--Hat--Arsenal-USA--2021-blue.svg?logo=none" alt="" /></a>&nbsp;<a href="https://drive.google.com/file/d/1Bh8lbf-Dztt5ViHJVACyrXMiglyICPQ2/view?usp=sharing" target="_blank"><img src="https://img.shields.io/badge/Defcon--Demolabs--29-2021-blue.svg?logo=none" alt="" /></a>&nbsp;</p>
 
 <p align="center">
-    An automated recon framework for web applications
-    <br />
-    <a href="https://rengine.wiki">reNgine Documentation</a>
-    .
-    <a href="https://github.com/yogeshojha/rengine/blob/master/CHANGELOG.md">What's new</a>
+<a href="https://github.com/yogeshojha/rengine/actions/workflows/codeql-analysis.yml" target="_blank"><img src="https://github.com/yogeshojha/rengine/actions/workflows/codeql-analysis.yml/badge.svg" alt="" /></a>&nbsp;<a href="https://github.com/yogeshojha/rengine/actions/workflows/build.yml" target="_blank"><img src="https://github.com/yogeshojha/rengine/actions/workflows/build.yml/badge.svg" alt="" /></a>&nbsp;
+</p>
+
+<p align="center">
+<a href="https://discord.gg/H6WzebwX3H" target="_blank"><img src="https://img.shields.io/discord/880363103689277461" alt="" /></a>&nbsp;
+</p>
+
+<p align="left">An automated reconnaissance framework for web applications with focus on highly configurable streamlined recon process via Engines, recon data correlation and organization, continuous monitoring, backed by database and simple yet intuitive User Interface.</p>
+
+<p align="left">
+reNgine makes is easy for penetration testers to gather reconnaissance with minimal configuration and with the help of reNgine's correlation, it just makes recon effortless.
+</p>
+
+Dashboard             |  Scan Results
+:-------------------------:|:-------------------------:
+![](.github/screenshots/1.gif)  |  ![](.github/screenshots/2.gif)
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
+
+<p align="center">
+    ⭐<a href="https://rengine.wiki">reNgine Documentation</a>
+    ·
+    <a href="https://rengine.wiki/changelog/">What's new</a>
     ·
     <a href="https://github.com/yogeshojha/rengine/blob/master/CONTRIBUTING.md">Contribute</a>
     ·
     <a href="https://github.com/yogeshojha/rengine/issues">Report Bug</a>
     ·
-    <a href="https://github.com/yogeshojha/rengine/issues">Request Feature</a>
+    <a href="https://github.com/yogeshojha/rengine/issues">Request Feature</a>⭐
 </p>
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
 ## Table of Contents
 
 * [About reNgine](#about-reNgine)
-    * [What is reNgine](#about-reNgine)
-    * [Features](#features)
-    * [What it is not](#what-it-is-not)
-    * [Screenshots](#screenshots)
-* [Installation](#installation)
+* [Features](#features)
+* [Documentation](#documentation)
+* [Screenshots](#screenshots)
+* [What's new in reNgine](#changelog)
+* [Quick Installation](#quick-installation)
+* [reNgine Bug Bounty Program](#reNgine-bug-bounty-program)
 * [Contributing](#contributing)
-* [License](#license)
+* [reNgine Support](#reNgine-support)
+* [Related Projects](#related-projects)
+* [Support and Sponsor](#support-and-sponsoring)
 * [Acknowledgements & Credits](#acknowledgements-and-credits)
+* [License](#license)
 
-**reNgine official documentation has been released. All the installation instructions and other information regarding reNgine has been documented at** [https://rengine.wiki](https://rengine.wiki)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
 ## About reNgine
 
-![](https://user-images.githubusercontent.com/17223002/100549767-f7e0f680-329a-11eb-8a20-8b7e087c1a26.png)
+<img src=".github/screenshots/rengine_1.jpeg">
 
-reNgine is an automated reconnaissance framework meant for information gathering during penetration testing of web applications. reNgine has customizable scan engines, which can be used to scan the domains, endpoints, or gather information. The beauty of reNgine is that it gathers everything in one place. It has a pipeline of reconnaissance, which is highly customizable.
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-reNgine can be very useful when you want to perform the reconnaissance, gather endpoints, directory and file search, grab screenshots, and gather all the results in one place.
+reNgine is an automated reconnaissance framework with a focus on a highly configurable streamlined recon process. reNgine is backed by a database, with data correlation and organization, the custom query “like” language for recon data filtering, reNgine aims to address the shortcomings of traditional recon workflow. Developers behind the reNgine understand that recon data can be huge, manually looking up for entries to attack could be cumbersome, with features like Auto Interesting Subdomains discovery, reNgine automatically identifies interesting subdomains to attack based on certain keywords (both built-in and custom) and helps penetration testers focus on attack rather than recon.
 
-Suppose, if you have a domain hackerone.com, reNgine can perform the scan based on your scan engines, gather all the results in one place. reNgine makes it possible for use cases like, "I want to search the subdomain which has page title "Dashboard" and has page status as 200, and I quickly want to have a look at the screenshot".
+reNgine is also focused on continuous monitoring. Penetration testers can choose to schedule the scan at periodic intervals, get notified on notification channels like Discord, Slack, and Telegram for any new subdomains or vulnerabilities identified, or any recon data changes.
 
-Another use-case could be, "I want to list all subdomains that use PHP, and the HTTP status is 200!"
+Interoperability is something every recon tool needs, and reNgine is no different. Beginning reNgine 1.0, we additionally developed features such as import and export subdomains, endpoints, GF pattern matched endpoints, etc. This will allow you to use your favourite recon workflow in conjunction with reNgine.
 
-On the endpoints part, reNgine is capable of gathering the URL endpoints using tools like `gau`, `hakrawler` which gathers URL from many sources like common crawl, Wayback engine, etc.
+reNgine features Highly configurable scan engines based on YAML, that allows penetration testers to create as many recon engines as they want of their choice, configure as they wish, and use it against any targets for the scan. These engines allow penetration testers to use tools of their choice, the configuration of their choice. Out of the box, reNgine comes with several scan engines like Full Scan, Passive Scan, Screenshot gathering, OSINT Engine, etc.
 
-reNgine also makes it possible for the use case like, "search the URLs that have extension .php and HTTP status is 200!"
+Our focus has always been on finding the right recon data with very minimal effort. While having a discussion with fellow hackers/pentesters, screenshots gallery was a must, reNgine 1.0 also comes with a screenshot gallery, and what's exciting than having a screenshot gallery with filters, filter screenshots with HTTP status, technology, ports, and services.
 
-**Assume that, you are looking for open redirection, you can quickly search for `=http` and look for HTTP status 30X, this will give high accuracy of open redirection with minimal efforts.**
+We also want our fellow hackers to stay ahead of the game, reNgine 1.0 introduces automatic vulnerability reporting (currently only Hackerone is supported, other platforms *may* come soon). This allows hackers to define their own vulnerability report template and reNgine will do the rest of the job to report vulnerability as soon as it is identified.
 
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-## Demo
+## Features
 
-Click below to watch the demo
-
-[![Watch the Demo](https://img.youtube.com/vi/u8_Z2-3-o2M/maxresdefault.jpg)](https://www.youtube.com/watch?v=u8_Z2-3-o2M)
-
-Version 0.5 Release Teaser
-[![Watch the Teaser](https://img.youtube.com/vi/DSOS_dkorBM/maxresdefault.jpg)](https://www.youtube.com/watch?v=DSOS_dkorBM)
-
-### Key Features
-- Vulnerability Scan using Nuclei, Subdomain Discovery, Ports Discovery, Endpoints Discovery, Directory Bruteforce, Visual Reconnaissance (Screenshot the targets)
-- IP Discovery, CNAME discovery, Subdomain Takeover Scan
+- Perform Recon: Subdomain Discovery, Ports Discovery, Endpoints Discovery, Directory Bruteforce, Screenshot gathering
+- IP Discovery, CNAME discovery, Vulnerability scan using Nuclei
+- Ability to Automatically report Vulnerabilities to Hackerone
+- Support for Parallel Scans
+- Recon Data visualization
 - Highly configurable scan engines
-- Run multiple scans in parallel
-- Run Clocked Scans (Run reconnaissance exactly at X Hours and Y minutes)
-- Run Periodic Scans (Runs reconnaissance every X minutes/hours/days/week)
-- [Advanced lookup in Recon Results](https://rengine.wiki/pentester/search/)
+- OSINT Capabilities (Metainfo Gathering, Employees Gathering, Email Address with option to look password in leaked database, dorks etc)
+- Customizable Alerts/Notification on Slack, Discord and Telegram
+- Perform Advanced Query lookup using natural language alike and, or, not operations
+- Support for Recon Notes and Todos
+- Support for Clocked Scans (Run reconnaissance exactly at X Hours and Y minutes) and Periodic Scans (Runs reconnaissance every X minutes/hours/days/week)
+- Proxy Support
+- Screenshot Gallery with Filters
+- Powerful recon data filtering with auto suggestions
+- Recon Data changes, finds new/removed subdomains/endpoints
+- Support for tagging targets into Organization
+- Ability to identify Interesting Subdomains
+- Support for custom GF patterns and custom Nuclei Templates
+- Support for editing tool related configuration files (Nuclei, Subfinder, Naabu, amass)
+- Ability to Mark Important Subdomains
+- Interoperable with other tools, Import/Export Subdomains/Endpoints
+- Option to send scan data directly to discord
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
+
+## Documentation
+
+You can find reNgine documentation at [https://rengine.wiki](https://rengine.wiki)
+
+## Screenshots
+
+**General Usage**
+<img src=".github/screenshots/3.gif">
 
 
-### What it is not
+**Dark Mode**
+<img src=".github/screenshots/dark.gif">
 
-reNgine is not a:
-* Reconnaissance with high accuracy (No! reNgine, uses other open-source tools, to make this pipeline possible. The accuracy and capability of reNgine is also dependent on those tools)
-* Speed oriented recon framework with immediate results
+**Recon Data filtering**
+<img src=".github/screenshots/filtering.gif">
 
-### Screenshots
+<details>
+  <summary>Other Screenshots (Click to Expand!)</summary>
 
-#### Scan results
+  **Auto Report Vulnerability to hackerone with customizable vulnerability report template**
+  <img src=".github/screenshots/hackerone1.gif">
 
-![](https://user-images.githubusercontent.com/17223002/95360568-2cfb4900-08e9-11eb-9bf4-84087b2b48d3.png)
+  **Report Vulnerability Manually**
+  <img src=".github/screenshots/hackerone.gif">
 
-![](https://user-images.githubusercontent.com/17223002/95360459-06d5a900-08e9-11eb-887a-85d626127d88.png)
+  **Customizable Notification**
+  <img src=".github/screenshots/notif.gif">
 
-#### Gathered Endpoints
+  **Tagging Organization**
+  <img src=".github/screenshots/organization.gif">
 
-![](https://user-images.githubusercontent.com/17223002/95360993-c62a5f80-08e9-11eb-8890-124a99c98dca.png)
+  **Recon data Visualization**
+  <img src=".github/screenshots/visualization.gif">
 
-Of course, at this point, reNgine does not give the best of the best result compared to other tools, but reNgine has certainly minimal efforts. Also, I am continuously adding new features. You may help me on this journey by creating a PR filled with new features and bug fixes. Please have a look at the [Contributing](#contributing) section before doing so.
+  **Upload custom GF and Nuclei patterns, with option to edit tool configuration**
+  <img src=".github/screenshots/tool.gif">
 
-#### Advanced Lookup
+  **Recon TODO**
+  <img src=".github/screenshots/todo.gif">
 
-![](https://rengine.wiki/static/query_2.png)
+</details>
 
-![](https://rengine.wiki/static/query_3.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-## Installation
 
-All the installation instructions have been moved to wiki documentation. Find the wiki documentation here [https://rengine.wiki](https://rengine.wiki)
+## Changelog
+
+You can watch [reNgine 1.0 release trailer here.](https://www.youtube.com/watch?v=_jBf_9qEG3U) (Recommended)
+
+[Please find the latest release notes and changelog here.](https://rengine.wiki/changelog/)
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)  
+
+## Quick Installation
+
+**(Only Ubuntu/VPS)**
+
+1. Clone this repo
+
+```
+git clone https://github.com/yogeshojha/rengine && cd rengine
+```
+
+2. Edit the dotenv file, **please make sure to change the password for postgresql POSTGRES_PASSWORD !**
+
+```
+nano .env
+```
+
+3. Run the installation script, Please keep an eye for any prompt, you will also be asked for username and password for reNgine.
+
+```
+sudo ./install.sh
+```
+
+if `./install.sh` does not have install permission, please change it, `chmod +x install.sh`
+
+**reNgine can now be accessed from https://127.0.0.1 or if you're on the VPS https://your_vps_ip_address**
+
+## Installation (Mac/Windows/Other)
+
+Installation instructions can be found at [https://reNgine.wiki](https://reNgine.wiki)
+
+## reNgine Bug Bounty Program
+
+[![huntr](https://cdn.huntr.dev/huntr_security_badge_mono.svg)](https://huntr.dev/bounties/disclose/?target=https%3A%2F%2Fgithub.com%2Fyogeshojha%2Frengine)
+
+Security Researchers, welcome onboard! I am excited to announce bug bounty program for reNgine in collaboration with [huntr.dev](https://huntr.dev), this means you'll be rewarded for any security vulnerabilities discovered in reNgine.
+
+Thank you for your interest in reporting vulnerabilities to reNgine! If you are aware of potential security vulnerabilities within reNgine, we encourage you to report immediately via [huntr.dev](https://huntr.dev/bounties/disclose/?target=https%3A%2F%2Fgithub.com%2Fyogeshojha%2Frengine)
+
+**Please do not disclose any vulnerabilities via Github Issues/Blogs/Tweets after/before reporting on huntr.dev as it is explicitly against huntr.dev and reNgine disclosure policy and will not be eligible for monetary rewards.**
+
+Please note that the maintainer of reNgine does not determine the bounty amount.
+The bounty reward is determined by industry-first equation from huntr.dev to understand the popularity, impact and value of repositories to the open source community.
+
+**What do I expect from security researchers?**
+
+* Patience: Please note that currently I am the only maintainer in reNgine and will take sometime to validate your report. I request your patience throughout the process.
+* Respect Privacy and Security Reports: Please do not disclose any vulnerabilities in public (this also includes github issues) before or after reporting on huntr.dev! That is against the disclosure policy and will not be eligible for monetary rewards.
+* Respect the rules
+
+**What do you get in return?**
+
+* Much thanks from Maintainer
+* Monetary Rewards
+* CVE ID(s)
+
+Please find the [FAQ](https://www.huntr.dev/faq) and [Responsible disclosure policy](https://www.huntr.dev/policy/) from huntr.dev.
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
 ## Contributing
 
@@ -117,26 +224,94 @@ Contributions are what make the open-source community such an amazing place to l
 
 See [contributing guide](.github/CONTRIBUTING.md) to get started.
 
+You can also [join our discord channel #development](https://discord.gg/JuhHdHTtwd) for any development related queries.
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
+
 ### First-time Open Source contributors
 
 Please note that reNgine is beginner-friendly. If you have never done any open-source yet, we encourage you to do so. **We will be happy and proud of your first PR ever.**
 
 You can begin with resolving any [open issues](https://github.com/yogeshojha/rengine/issues).
 
-## License
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
-It is distributed under the GNU GPL v3 license License. See [LICENSE](LICENSE) for more information.
+
+## reNgine Support
+
+Please do not raise any github issues for support requests. Instead, [join our discord channel #support](https://discord.gg/azv6fzhNCE)
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
+
+## Related Projects
+
+There are many other great reconnaissance frameworks, you may use reNgine in conjunction with these tools. But, they themselves are great, and may sometimes even produce better results than reNgine.
+
+- [ReconFTW](https://github.com/six2dez/reconftw#sample-video)
+- [Osmedeus](https://github.com/j3ssie/Osmedeus)
+- [EchoPwn](https://github.com/hackerspider1/EchoPwn)
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
+
+## Support and Sponsoring
+
+If reNgine has helped you in any way, and you love this project and/or support active development of reNgine, please consider any of these options:
+
+- Add a [GitHub Star](https://github.com/yogeshojha/rengine) to the project.
+- Tweet about this project, or maybe blogs?
+- Sponsor financially via Github or Paypal. https://paypal.me/yogeshojha11
+- Join DigitalOcean using my [referral link](https://m.do.co/c/e353502d19fc) your profit is **$100** and I get $25 DO credit. This will help me test reNgine on VPS before I release any major features. ps. Please consider running reNgine/any recon on VPS!
+- If you are looking for Proxies, please use [this referral](https://app.privateproxy.me/from/27103) link to purchase. Or you can also use coupon `rengine` here on [PrivateProxy](https://privateproxy.me/), using coupon `rengine`, you'll get additional 25% off.
+
+Together, we can make reNgine **better** every day!
+
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
 ## Acknowledgements and Credits
-reNgine is just a pipeline of recon. reNgine would not have been possible without the following individuals/organizations.
+reNgine would not have been possible without the following individuals/organizations. Thanks to these amazing devs/hackers!
 
-* Amass: [OWASP](https://github.com/OWASP/)
-* httpx, subfinder, naabu: [ProjectDiscovery](https://github.com/projectdiscovery/)
-* Sublist3r: [Ahmed Aboul-Ela](https://github.com/aboul3la/)
-* assetfinder: [Tom Hudson](https://github.com/tomnomnom/assetfinder)
-* gau: [Corben Leo](https://github.com/lc)
-* hakrawler : [Luke Stephens](https://github.com/hakluke/hakrawler)
-* dirsearch: [maurosoria](https://github.com/maurosoria/dirsearch)
-* subjack [haccer](https://github.com/haccer/subjack)
+- Project Discovery
+  - nuclei, httpx, naabu, subfinder
+- Tom Hudson
+  - gf, assetfinder, waybackurls, unfurl
+- OWASP
+  - amass
+- Ahmed Aboul-Ela
+  - Sublist3r
+- Mauro Soria
+  - dirsearch
+- Corben Leo
+  - gau
+- Luke Stephens
+  - hakrawler
+- Jaeles Project
+  - gospider
+- Jing Ling
+  - OneForAll
+- FortyNorthSecurity
+  - EyeWitness
+- Christian Martorella
+  - theHarvester
+- Davidtavarez
+  - pwndb
+- Deepseagirl
+  - degoogle
+- Josué Encinar
+  - Metafinder, Emailfinder
+- Bp0lr
+  - gauplus
+- Nicolas Crocfer
+  - whatportis
+- Helmut Wandl
+  - Gridzy.js
 
-Also, some of the icons and images used herein reNgine are from Freepik and Flaticon.
+<div>reNgine official Icon is made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
+
+## License
+Distributed under the GNU GPL v3 License. See [LICENSE](LICENSE) for more information.
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
