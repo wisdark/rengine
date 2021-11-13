@@ -1335,8 +1335,10 @@ def vulnerability_scan(
                             vulnerability.description = json_st['info']['description']
                         if 'reference' in json_st['info']:
                             vulnerability.reference = json_st['info']['reference']
-                        if 'matched' in json_st:
+                        if 'matched' in json_st:  # TODO remove in rengine 1.1. 'matched' isn't used in nuclei 2.5.3
                             vulnerability.http_url = json_st['matched']
+                        if 'matched-at' in json_st:
+                            vulnerability.http_url = json_st['matched-at']
                         if 'templateID' in json_st:
                             vulnerability.template_used = json_st['templateID']
                         if 'description' in json_st:
@@ -1859,8 +1861,11 @@ def get_and_save_employees(scan_history, results_dir):
     file_location = results_dir + '/theHarvester.html'
     print(file_location)
     # delete proxy environ var
-    del os.environ['https_proxy']
-    del os.environ['HTTPS_PROXY']
+    if os.environ.get(('https_proxy')):
+        del os.environ['https_proxy']
+
+    if os.environ.get(('HTTPS_PROXY')):
+        del os.environ['HTTPS_PROXY']
 
     if os.path.isfile(file_location):
         logger.info('Parsing theHarvester results')
