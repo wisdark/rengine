@@ -31,7 +31,7 @@
     version_lookup_command: nuclei -version
     update_command: nuclei -update
     install_command: go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-    version_match_regex: (\d+\.)?(\d+\.)?(\*|\d+)
+    version_match_regex: v(\d+\.)?(\d+\.)?(\*|\d+)
     is_default: true
     is_subdomain_gathering: false
     is_github_cloned: false
@@ -47,7 +47,7 @@
       with increased threads.
     github_url: https://github.com/projectdiscovery/httpx
     license_url: https://github.com/projectdiscovery/httpx/blob/master/LICENSE.md
-    version_lookup_command: httpx -version
+    version_lookup_command: /go/bin/httpx -version
     update_command: go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
     install_command: go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
     version_match_regex: v(\d+\.)?(\d+\.)?(\*|\d+)
@@ -66,11 +66,11 @@
       that does fast SYN/CONNECT scans on the host/list of hosts and lists all ports
       that return a reply.
     github_url: https://github.com/projectdiscovery/naabu
-    license_url: null
+    license_url: https://github.com/projectdiscovery/naabu/blob/main/LICENSE.md
     version_lookup_command: naabu -version
     update_command: go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
     install_command: go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
-    version_match_regex: v(\d+\.)?(\d+\.)?(\*|\d+)
+    version_match_regex: '(\b\d+\.\d+\.\d+\b)'
     is_default: true
     is_subdomain_gathering: false
     is_github_cloned: false
@@ -79,7 +79,7 @@
 - model: scanEngine.installedexternaltool
   pk: 5
   fields:
-    logo_url: null
+    logo_url: https://raw.githubusercontent.com/osmedeus/assets/main/logo-transparent.png
     name: gospider
     description: Fast web spider written in Go
     github_url: https://github.com/jaeles-project/gospider
@@ -96,16 +96,16 @@
 - model: scanEngine.installedexternaltool
   pk: 6
   fields:
-    logo_url: https://raw.githubusercontent.com/OWASP/Amass/master/images/amass_logo.png
+    logo_url: https://raw.githubusercontent.com/owasp-amass/amass/master/images/amass_logo.png
     name: amass
     description: The OWASP Amass Project performs network mapping of attack surfaces
       and external asset discovery using open source information gathering and active
       reconnaissance techniques.
-    github_url: https://github.com/OWASP/Amass
-    license_url: https://github.com/OWASP/Amass/blob/master/LICENSE
+    github_url: https://github.com/owasp-amass/amass
+    license_url: https://github.com/owasp-amass/amass/blob/master/LICENSE
     version_lookup_command: amass -version
-    update_command: go install -v github.com/OWASP/Amass/v3/...@latest
-    install_command: go install -v github.com/OWASP/Amass/v3/...@latest
+    update_command: go install -v github.com/owasp-amass/amass/v4/...@latest
+    install_command: go install -v github.com/owasp-amass/amass/v4/...@latest
     version_match_regex: v(\d+\.)?(\d+\.)?(\*|\d+)
     is_default: true
     is_subdomain_gathering: true
@@ -115,13 +115,13 @@
 - model: scanEngine.installedexternaltool
   pk: 7
   fields:
-    logo_url: null
+    logo_url: https://github.com/ffuf/ffuf/raw/master/_img/ffuf_run_logo_600.png
     name: ffuf
     description: A fast web fuzzer written in Go.
     github_url: https://github.com/ffuf/ffuf
     license_url: https://github.com/ffuf/ffuf/blob/master/LICENSE
     version_lookup_command: ffuf -V
-    update_command: go install -v github.com/ffuf/ffuf@latest
+    update_command: go install github.com/ffuf/ffuf/v2@latest
     install_command: ''
     version_match_regex: (\d+\.)?(\d+\.)?(\*|\d+)
     is_default: true
@@ -131,23 +131,6 @@
     subdomain_gathering_command: null
 - model: scanEngine.installedexternaltool
   pk: 8
-  fields:
-    logo_url: null
-    name: assetfinder
-    description: Find domains and subdomains potentially related to a given domain.
-    github_url: https://github.com/tomnomnom/assetfinder
-    license_url: https://github.com/tomnomnom/assetfinder/blob/master/LICENSE
-    version_lookup_command: null
-    update_command: go install -v github.com/tomnomnom/assetfinder@latest
-    install_command: go install -v github.com/tomnomnom/assetfinder@latest
-    version_match_regex: null
-    is_default: true
-    is_subdomain_gathering: true
-    is_github_cloned: false
-    github_clone_path: null
-    subdomain_gathering_command: null
-- model: scanEngine.installedexternaltool
-  pk: 9
   fields:
     logo_url: null
     name: sublist3r
@@ -165,11 +148,11 @@
     version_match_regex: '[vV]*(\d+\.)?(\d+\.)?(\*|\d+)'
     is_default: true
     is_subdomain_gathering: true
-    is_github_cloned: false
-    github_clone_path: null
+    is_github_cloned: true
+    github_clone_path: /usr/src/github/Sublist3r
     subdomain_gathering_command: null
 - model: scanEngine.installedexternaltool
-  pk: 10
+  pk: 9
   fields:
     logo_url: null
     name: hakrawler
@@ -187,41 +170,24 @@
     github_clone_path: null
     subdomain_gathering_command: null
 - model: scanEngine.installedexternaltool
-  pk: 11
-  fields:
-    logo_url: null
-    name: gauplus
-    description: Get all URLs
-    github_url: https://github.com/bp0lr/gauplus
-    license_url: https://github.com/bp0lr/gauplus/blob/main/LICENSE
-    version_lookup_command: null
-    update_command: go install -v -v github.com/bp0lr/gauplus@latest
-    install_command: go install -v -v github.com/bp0lr/gauplus@latest
-    version_match_regex: '[vV]*(\d+\.)?(\d+\.)?(\*|\d+)'
-    is_default: true
-    is_subdomain_gathering: false
-    is_github_cloned: false
-    github_clone_path: null
-    subdomain_gathering_command: null
-- model: scanEngine.installedexternaltool
-  pk: 12
+  pk: 10
   fields:
     logo_url: null
     name: OneForAll
     description: A powerful subdomain integration tool.
     github_url: https://github.com/shmilylty/OneForAll
     license_url: https://github.com/shmilylty/OneForAll/blob/master/LICENSE
-    version_lookup_command: null
+    version_lookup_command: cat /usr/src/github/OneForAll/oneforall.py
     update_command: git pull
     install_command: git clone https://github.com/shmilylty/OneForAll
-    version_match_regex: '[vV]*(\d+\.)?(\d+\.)?(\*|\d+)'
+    version_match_regex: v\d+\.\d+\.\d+\b
     is_default: true
     is_subdomain_gathering: true
-    is_github_cloned: false
-    github_clone_path: null
+    is_github_cloned: true
+    github_clone_path: /usr/src/github/OneForAll
     subdomain_gathering_command: null
 - model: scanEngine.installedexternaltool
-  pk: 13
+  pk: 11
   fields:
     logo_url: https://raw.githubusercontent.com/laramies/theHarvester/master/theHarvester-logo.png
     name: theHarvester
@@ -231,13 +197,135 @@
       a company's external threat landscape on the internet. The tool gathers emails,
       names, subdomains, IPs and URLs using multiple public data sources.
     github_url: https://github.com/laramies/theHarvester
-    license_url: null
-    version_lookup_command: python3 /usr/src/github/theHarvester/theHarvester.py
+    license_url: https://github.com/laramies/theHarvester/blob/master/README/LICENSES
+    version_lookup_command: cat /usr/src/github/theHarvester/theHarvester/lib/version.py
     update_command: git pull
     install_command: git clone https://github.com/laramies/theHarvester
-    version_match_regex: (\d+\.)?(\d+\.)?(\*|\d+)
+    version_match_regex: \b\d+\.\d+\.\d+\b
     is_default: true
     is_subdomain_gathering: false
     is_github_cloned: true
     github_clone_path: /usr/src/github/theHarvester
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 12
+  fields:
+    logo_url: null
+    name: ctfr
+    description: This tool allows to get the subdomains from a HTTPS website in
+      a few seconds. CTFR does not use neither dictionary attack nor brute-force,
+      it just abuses of Certificate Transparency logs.
+    github_url: https://github.com/UnaPibaGeek/ctfr
+    license_url: https://github.com/UnaPibaGeek/ctfr/blob/master/LICENSE
+    version_lookup_command: python3 /usr/src/github/ctfr/ctfr.py --help
+    update_command: git pull
+    install_command: git clone https://github.com/UnaPibaGeek/ctfr/
+    version_match_regex: (\d+\.)?(\d+\.).
+    is_default: true
+    is_subdomain_gathering: true
+    is_github_cloned: true
+    github_clone_path: /usr/src/github/ctfr
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 13
+  fields:
+    logo_url: https://user-images.githubusercontent.com/8293321/174841003-01a62bad-2ecf-4874-89c4-efa53dd56884.png
+    name: tlsx
+    description: A fast and configurable TLS grabber focused on TLS based data collection and analysis.
+    github_url: https://github.com/projectdiscovery/tlsx
+    license_url: https://github.com/projectdiscovery/tlsx/blob/main/LICENSE
+    version_lookup_command: tlsx -version
+    update_command: tlsx -update
+    install_command: go install -v github.com/projectdiscovery/tlsx/cmd/tlsx@latest
+    version_match_regex: (\d+\.)?(\d+\.)?(\*|\d+)
+    is_default: true
+    is_subdomain_gathering: true
+    is_github_cloned: false
+    github_clone_path: null
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 14
+  fields:
+    logo_url: https://avatars.githubusercontent.com/u/79084675?v=4
+    name: netlas
+    description: Non-intrusive Internet Scanner.
+    github_url: https://github.com/netlas-io/netlas-python
+    license_url: https://github.com/netlas-io/netlas-python/blob/master/LICENSE
+    version_lookup_command: pip3 show netlas
+    update_command: pip3 install netlas --update
+    install_command: pip3 install netlas
+    version_match_regex: (\d+\.)?(\d+\.)?(\*|\d+)
+    is_default: true
+    is_subdomain_gathering: true
+    is_github_cloned: false
+    github_clone_path: null
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 15
+  fields:
+    logo_url: https://github.githubassets.com/images/icons/emoji/unicode/1f98a.png
+    name: dalfox
+    description: DalFox is a powerful open-source tool that focuses on automation, making it ideal for quickly scanning for XSS flaws and analyzing parameters. Its advanced testing engine and niche features are designed to streamline the process of detecting and verifying vulnerabilities.
+      As for the name, Dal(달) is the Korean word for "moon," while "Fox" stands for "Finder Of XSS".
+    github_url: https://github.com/hahwul/dalfox
+    license_url: https://github.com/hahwul/dalfox/blob/main/LICENSE.txt
+    version_lookup_command: dalfox version
+    update_command: go install -v github.com/hahwul/dalfox/v2@latest
+    install_command: go install -v github.com/hahwul/dalfox/v2@latest
+    version_match_regex: v(\d+\.)?(\d+\.)?(\*|\d+)
+    is_default: true
+    is_subdomain_gathering: false
+    is_github_cloned: false
+    github_clone_path: null
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 16
+  fields:
+    logo_url: https://user-images.githubusercontent.com/8293321/196779266-421c79d4-643a-4f73-9b54-3da379bbac09.png
+    name: katana
+    description: A next-generation crawling and spidering framework.
+    github_url: https://github.com/projectdiscovery/katana
+    license_url: https://github.com/projectdiscovery/katana/blob/main/LICENSE.md
+    version_lookup_command: katana -version
+    update_command: go install -v github.com/projectdiscovery/katana/cmd/katana@latest
+    install_command: go install -v github.com/projectdiscovery/katana/cmd/katana@latest
+    version_match_regex: 'v(\d+\.)?(\d+\.)?(\*|\d+)'
+    is_default: true
+    is_subdomain_gathering: false
+    is_github_cloned: false
+    github_clone_path: null
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 17
+  fields:
+    logo_url: https://user-images.githubusercontent.com/25837540/90128972-fc3bdf00-dd91-11ea-8c3b-0d6f4e8c6ba3.png
+    name: crlfuzz
+    description: A fast tool to scan CRLF vulnerability written in Go
+    github_url: https://github.com/dwisiswant0/crlfuzz
+    license_url: https://github.com/dwisiswant0/crlfuzz/blob/master/README.md
+    version_lookup_command: crlfuzz -V
+    update_command: go install -v github.com/dwisiswant0/crlfuzz/cmd/crlfuzz@latest
+    install_command: go install -v github.com/dwisiswant0/crlfuzz/cmd/crlfuzz@latest
+    version_match_regex: '(\d+\.)?(\d+\.)?(\*|\d+)'
+    is_default: true
+    is_subdomain_gathering: false
+    is_github_cloned: false
+    github_clone_path: null
+    subdomain_gathering_command: null
+- model: scanEngine.installedexternaltool
+  pk: 18
+  fields:
+    logo_url: null
+    name: gau
+    description: Get all URLs
+    github_url: https://github.com/lc/gau
+    license_url: https://github.com/lc/gau/blob/main/LICENSE
+    version_lookup_command: gau --version
+    update_command: go install github.com/lc/gau/v2/cmd/gau@latest
+    install_command: go install github.com/lc/gau/v2/cmd/gau@latest
+    version_match_regex: '[vV]*(\d+\.)?(\d+\.)?(\*|\d+)'
+    is_default: true
+    is_subdomain_gathering: false
+    is_github_cloned: false
+    github_clone_path: null
     subdomain_gathering_command: null
