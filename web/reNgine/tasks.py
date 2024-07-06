@@ -10,6 +10,7 @@ import xmltodict
 import yaml
 import tldextract
 import concurrent.futures
+import base64
 
 from datetime import datetime
 from urllib.parse import urlparse
@@ -416,6 +417,7 @@ def subdomain_discovery(
 		proxy = get_random_proxy()
 		if tool in default_subdomain_tools:
 			if tool == 'amass-passive':
+				use_amass_config = config.get(USE_AMASS_CONFIG, False)
 				cmd = f'amass enum -passive -d {host} -o {self.results_dir}/subdomains_amass.txt'
 				cmd += ' -config /root/.config/amass.ini' if use_amass_config else ''
 
@@ -441,7 +443,7 @@ def subdomain_discovery(
 
 			elif tool == 'oneforall':
 				cmd = f'python3 /usr/src/github/OneForAll/oneforall.py --target {host} run'
-				cmd_extract = f'cut -d\',\' -f6 /usr/src/github/OneForAll/results/{host}.csv > {self.results_dir}/subdomains_oneforall.txt'
+				cmd_extract = f'cut -d\',\' -f6 /usr/src/github/OneForAll/results/{host}.csv | tail -n +2 > {self.results_dir}/subdomains_oneforall.txt'
 				cmd_rm = f'rm -rf /usr/src/github/OneForAll/results/{host}.csv'
 				cmd += f' && {cmd_extract} && {cmd_rm}'
 
@@ -468,14 +470,21 @@ def subdomain_discovery(
 		elif tool in custom_subdomain_tools:
 			tool_query = InstalledExternalTool.objects.filter(name__icontains=tool.lower())
 			if not tool_query.exists():
-				logger.error(f'Missing {{TARGET}} and {{OUTPUT}} placeholders in {tool} configuration. Skipping.')
+				logger.error(f'{tool} configuration does not exists. Skipping.')
 				continue
 			custom_tool = tool_query.first()
 			cmd = custom_tool.subdomain_gathering_command
-			if '{TARGET}' in cmd and '{OUTPUT}' in cmd:
-				cmd = cmd.replace('{TARGET}', host)
-				cmd = cmd.replace('{OUTPUT}', f'{self.results_dir}/subdomains_{tool}.txt')
-				cmd = cmd.replace('{PATH}', custom_tool.github_clone_path) if '{PATH}' in cmd else cmd
+			if '{TARGET}' not in cmd:
+				logger.error(f'Missing {{TARGET}} placeholders in {tool} configuration. Skipping.')
+				continue
+			if '{OUTPUT}' not in cmd:
+				logger.error(f'Missing {{OUTPUT}} placeholders in {tool} configuration. Skipping.')
+				continue
+
+			
+			cmd = cmd.replace('{TARGET}', host)
+			cmd = cmd.replace('{OUTPUT}', f'{self.results_dir}/subdomains_{tool}.txt')
+			cmd = cmd.replace('{PATH}', custom_tool.github_clone_path) if '{PATH}' in cmd else cmd
 		else:
 			logger.warning(
 				f'Subdomain discovery tool "{tool}" is not supported by reNgine. Skipping.')
@@ -539,9 +548,10 @@ def subdomain_discovery(
 
 		# Add subdomain
 		subdomain, _ = save_subdomain(subdomain_name, ctx=ctx)
-		subdomain_count += 1
-		subdomains.append(subdomain)
-		urls.append(subdomain.name)
+		if subdomain:
+			subdomain_count += 1
+			subdomains.append(subdomain)
+			urls.append(subdomain.name)
 
 	# Bulk crawl subdomains
 	if enable_http_crawl:
@@ -680,10 +690,6 @@ def osint_discovery(config, host, scan_history_id, activity_id, results_dir, ctx
 	grouped_tasks = []
 
 	if 'emails' in osint_lookup:
-		emails = get_and_save_emails(scan_history, activity_id, results_dir)
-		emails_str = '\n'.join([f'• `{email}`' for email in emails])
-		# self.notify(fields={'Emails': emails_str})
-		# ctx['track'] = False
 		_task = h8mail.si(
 			config=config,
 			host=host,
@@ -1197,11 +1203,22 @@ def screenshot(self, ctx={}, description=None):
 
 	# Loop through results and save objects in DB
 	screenshot_paths = []
-	with open(output_path, 'r') as file:
-		reader = csv.reader(file)
+	required_cols = [
+		'Protocol',
+		'Port',
+		'Domain',
+		'Request Status',
+		'Screenshot Path'
+	]
+	with open(output_path, 'r', newline='') as file:
+		reader = csv.DictReader(file)
 		for row in reader:
-			"Protocol,Port,Domain,Request Status,Screenshot Path, Source Path"
-			protocol, port, subdomain_name, status, screenshot_path, source_path = tuple(row)
+			parsed_row = {col: row[col] for col in required_cols if col in row}
+			protocol = parsed_row['Protocol']
+			port = parsed_row['Port']
+			subdomain_name = parsed_row['Domain']
+			status = parsed_row['Request Status']
+			screenshot_path = parsed_row['Screenshot Path']
 			logger.info(f'{protocol}:{port}:{subdomain_name}:{status}')
 			subdomain_query = Subdomain.objects.filter(name=subdomain_name)
 			if self.scan:
@@ -1215,7 +1232,7 @@ def screenshot(self, ctx={}, description=None):
 
 	# Remove all db, html extra files in screenshot results
 	run_command(
-		'rm -rf {0}/*.csv {0}/*.db {0}/*.js {0}/*.html {0}/*.css'.format(screenshots_path),
+		f'rm -rf {screenshots_path}/*.csv {screenshots_path}/*.db {screenshots_path}/*.js {screenshots_path}/*.html {screenshots_path}/*.css',
 		shell=True,
 		history_file=self.history_file,
 		scan_id=self.scan_id,
@@ -1661,49 +1678,75 @@ def dir_file_fuzz(self, ctx={}, description=None):
 				history_file=self.history_file,
 				scan_id=self.scan_id,
 				activity_id=self.activity_id):
+
+			# Empty line, continue to the next record
 			if not isinstance(line, dict):
 				continue
+
+			# Append line to results
 			results.append(line)
-			name = line['input'].get('FUZZ')
+
+			# Retrieve FFUF output
+			url = line['url']
+			# Extract path and convert to base64 (need byte string encode & decode)
+			name = base64.b64encode(extract_path_from_url(url).encode()).decode()
 			length = line['length']
 			status = line['status']
 			words = line['words']
-			url = line['url']
 			lines = line['lines']
 			content_type = line['content-type']
 			duration = line['duration']
+
+			# If name empty log error and continue
 			if not name:
 				logger.error(f'FUZZ not found for "{url}"')
 				continue
+
+			# Get or create endpoint from URL
 			endpoint, created = save_endpoint(url, crawl=False, ctx=ctx)
+
+			# Continue to next line if endpoint returned is None
+			if endpoint == None:
+				continue
+
+			# Save endpoint data from FFUF output
 			endpoint.http_status = status
 			endpoint.content_length = length
 			endpoint.response_time = duration / 1000000000
-			endpoint.save()
-			if created:
-				urls.append(endpoint.http_url)
-			endpoint.status = status
 			endpoint.content_type = content_type
 			endpoint.content_length = length
+			endpoint.save()
+
+			# Save directory file output from FFUF output
 			dfile, created = DirectoryFile.objects.get_or_create(
 				name=name,
 				length=length,
 				words=words,
 				lines=lines,
 				content_type=content_type,
-				url=url)
-			dfile.http_status = status
-			dfile.save()
-			# if created:
-			# 	logger.warning(f'Found new directory or file {url}')
-			dirscan.directory_files.add(dfile)
-			dirscan.save()
+				url=url,
+				http_status=status)
 
+			# Log newly created file or directory if debug activated
+			if created and DEBUG:
+				logger.warning(f'Found new directory or file {url}')
+
+			# Add file to current dirscan
+			dirscan.directory_files.add(dfile)
+
+			# Add subscan relation to dirscan if exists
 			if self.subscan:
 				dirscan.dir_subscan_ids.add(self.subscan)
 
-			subdomain_name = get_subdomain_from_url(endpoint.http_url)
-			subdomain = Subdomain.objects.get(name=subdomain_name, scan_history=self.scan)
+			# Save dirscan datas
+			dirscan.save()
+
+			# Get subdomain and add dirscan
+			if ctx.get('subdomain_id', 0) > 0:
+				subdomain = Subdomain.objects.get(id=ctx['subdomain_id'])
+			else:
+				subdomain_name = get_subdomain_from_url(endpoint.http_url)
+				subdomain = Subdomain.objects.get(name=subdomain_name, scan_history=self.scan)
 			subdomain.directories.add(dirscan)
 			subdomain.save()
 
@@ -2906,6 +2949,7 @@ def send_notif(
 		message = enrich_notification(message, scan_history_id, subscan_id)
 	send_discord_message(message, **options)
 	send_slack_message(message)
+	send_lark_message(message)
 	send_telegram_message(message)
 
 
@@ -3110,7 +3154,7 @@ def send_hackerone_report(vulnerability_id):
 				"type": "report",
 				"attributes": {
 				  "team_handle": vulnerability.target_domain.h1_team_handle,
-				  "title": '{} found in {}'.format(vulnerability.name, vulnerability.http_url),
+				  "title": f'{vulnerability.name} found in {vulnerability.http_url}',
 				  "vulnerability_information": tpl,
 				  "severity_rating": severity_value,
 				  "impact": "More information about the impact and vulnerability can be found here: \n" + vulnerability.reference if vulnerability.reference else "NA",
@@ -4056,7 +4100,15 @@ def remove_duplicate_endpoints(
 				logger.warning(msg)
 
 @app.task(name='run_command', bind=False, queue='run_command_queue')
-def run_command(cmd, cwd=None, shell=False, history_file=None, scan_id=None, activity_id=None):
+def run_command(
+		cmd, 
+		cwd=None, 
+		shell=False, 
+		history_file=None, 
+		scan_id=None, 
+		activity_id=None,
+		remove_ansi_sequence=False
+	):
 	"""Run a given command using subprocess module.
 
 	Args:
@@ -4065,7 +4117,7 @@ def run_command(cmd, cwd=None, shell=False, history_file=None, scan_id=None, act
 		echo (bool): Log command.
 		shell (bool): Run within separate shell if True.
 		history_file (str): Write command + output to history file.
-
+		remove_ansi_sequence (bool): Used to remove ANSI escape sequences from output such as color coding
 	Returns:
 		tuple: Tuple with return_code, output.
 	"""
@@ -4104,6 +4156,8 @@ def run_command(cmd, cwd=None, shell=False, history_file=None, scan_id=None, act
 			mode = 'w'
 		with open(history_file, mode) as f:
 			f.write(f'\n{cmd}\n{return_code}\n{output}\n------------------\n')
+	if remove_ansi_sequence:
+		output = remove_ansi_escape_sequences(output)
 	return return_code, output
 
 
@@ -4283,56 +4337,6 @@ def get_and_save_dork_results(lookup_target, results_dir, type, lookup_keywords=
 		logger.exception(e)
 
 	return results
-
-
-def get_and_save_emails(scan_history, activity_id, results_dir):
-	"""Get and save emails from Google, Bing and Baidu.
-
-	Args:
-		scan_history (startScan.ScanHistory): Scan history object.
-		activity_id: ScanActivity Object
-		results_dir (str): Results directory.
-
-	Returns:
-		list: List of emails found.
-	"""
-	emails = []
-
-	# Proxy settings
-	# get_random_proxy()
-
-	# Gather emails from Google, Bing and Baidu
-	output_file = f'{results_dir}/emails_tmp.txt'
-	history_file = f'{results_dir}/commands.txt'
-	command = f'python3 /usr/src/github/Infoga/infoga.py --domain {scan_history.domain.name} --source all --report {output_file}'
-	try:
-		run_command(
-			command,
-			shell=False,
-			history_file=history_file,
-			scan_id=scan_history.id,
-			activity_id=activity_id)
-
-		if not os.path.isfile(output_file):
-			logger.info('No Email results')
-			return []
-
-		with open(output_file) as f:
-			for line in f.readlines():
-				if 'Email' in line:
-					split_email = line.split(' ')[2]
-					emails.append(split_email)
-
-		output_path = f'{results_dir}/emails.txt'
-		with open(output_path, 'w') as output_file:
-			for email_address in emails:
-				save_email(email_address, scan_history)
-				output_file.write(f'{email_address}\n')
-
-	except Exception as e:
-		logger.exception(e)
-	return emails
-
 
 def save_metadata_info(meta_dict):
 	"""Extract metadata from Google Search.
