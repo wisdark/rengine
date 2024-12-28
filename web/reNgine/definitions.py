@@ -11,7 +11,7 @@ logger = logging.getLogger('django')
 # TOOLS DEFINITIONS
 ###############################################################################
 
-EMAIL_REGEX = re.compile(r'[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+')
+EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
 ###############################################################################
 # YAML CONFIG DEFINITIONS
@@ -20,6 +20,7 @@ EMAIL_REGEX = re.compile(r'[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+')
 ALL = 'all'
 AMASS_WORDLIST = 'amass_wordlist'
 AUTO_CALIBRATION = 'auto_calibration'
+CUSTOM_HEADERS = 'custom_headers'
 CUSTOM_HEADER = 'custom_header'
 FETCH_GPT_REPORT = 'fetch_gpt_report'
 RUN_NUCLEI = 'run_nuclei'
@@ -422,6 +423,22 @@ DEFAULT_DIR_FILE_FUZZ_EXTENSIONS =  [
     '.pdf',
 ]
 
+# Default Excluded Paths during Initate Scan
+# Mostly static files and directories
+DEFAULT_EXCLUDED_PATHS = [
+    # Static assets (using regex patterns)
+    '/static/.*',
+    '/assets/.*',
+    '/css/.*',
+    '/js/.*',
+    '/images/.*',
+    '/img/.*',
+    '/fonts/.*',
+
+    # File types (using regex patterns)
+    '.*\.ico',
+]
+
 # Roles and Permissions
 PERM_MODIFY_SYSTEM_CONFIGURATIONS = 'modify_system_configurations'
 PERM_MODIFY_SCAN_CONFIGURATIONS = 'modify_scan_configurations'
@@ -469,7 +486,7 @@ DEFAULT_GPT_MODELS = [
             'parameter_size': '~1.7T',
         }
     },
-	{
+    {
         'name': 'gpt-4-turbo',
         'model': 'gpt-4',
         'modified_at': '',
@@ -484,26 +501,30 @@ DEFAULT_GPT_MODELS = [
 
 # GPT Vulnerability Report Generator
 VULNERABILITY_DESCRIPTION_SYSTEM_MESSAGE = """
-    You are a highly skilled penetration tester who has recently completed a penetration testing.
-    You will be given with a
-        - Vulnerability title
-        - Vulnerable URL
-        - and some description about the vulnerability.
-    Your job is to write a detailed technical penetration testing report based on the given Vulnerability details.
-    The purpose of this report is to provide an in-depth analysis of the vulnerabilities discovered during the penetration testing engagement.
+You are an expert penetration tester who has just completed a comprehensive security assessment. Based on the provided vulnerability title, vulnerable URL, and vulnerability description, your task is to generate a detailed, technical penetration testing report in plain text format.
+Your task is to generate a detailed, technical penetration testing report. This report should offer an in-depth analysis of the discovered vulnerabilities, adhering to industry best practices and standards.
 
-    The penetration testing report must contain all separated by \n\n
+The output should adhere to the following structure:
 
-    - Vulnerability description
-        Include a detailed vulnerability description, include any known CVE IDs, any known existing vulnerabilities.
-    - Impact
-        Include what this vulnerability can impact for web applications.
-    - Remediation
-        Include steps to remediate this vulnerability. Separate each new remediations by - and a new line \n
-    - References
-        Include any references URL about this vulnerability, any existing CVE ID, or news articles etc. Separate each new references by - and a new line \n. Only include http urls
+Description:
+A comprehensive explanation of the vulnerability, including: Detailed technical analysis, Associated CVE IDs (if any), Related known vulnerabilities, Exploitation methods
 
-    Do not write 'Penetration Testing Report:' on the title.
+Impact:
+A thorough assessment of the vulnerability's potential impact on web applications, including: Data confidentiality breaches, System integrity compromises, Service availability disruptions, Potential for further exploitation
+
+Remediation:
+A prioritized list of specific, actionable steps to address the vulnerability, such as: Code modifications, Configuration changes, Security patch applications, Implementation of security controls
+
+References:
+Relevant, authoritative sources supporting your analysis, such as: Official CVE database entries, Vendor security advisories, Respected security research publications, Applicable industry standards or guidelines
+
+
+Ensure that:
+1. Each section (Description, Impact, Remediation, References) is separated by ONLY ONE blank line and no multiple new lines. The content must be immediately after the section title.
+2. Do not make title as bold, italic or underline. It must be Title ending with a colon. Example: Description:
+3. All URLs in the 'references' section begin with 'http://' or 'https://'.
+4. Remediation steps should be specific and actionable and should not contain any ambiguous or general recommendations.
+5. Refrain from including any personal opinions or subjective assessments in your report.
 """
 
 
@@ -527,3 +548,21 @@ ATTACK_SUGGESTION_GPT_SYSTEM_PROMPT = """
 
 # OSINT GooFuzz Path
 GOFUZZ_EXEC_PATH = '/usr/src/github/goofuzz/GooFuzz'
+
+
+# In App Notification Definitions
+SYSTEM_LEVEL_NOTIFICATION = 'system'
+PROJECT_LEVEL_NOTIFICATION = 'project'
+NOTIFICATION_TYPES = (
+    ('system', SYSTEM_LEVEL_NOTIFICATION),
+    ('project', PROJECT_LEVEL_NOTIFICATION),
+)
+NOTIFICATION_STATUS_TYPES = (
+    ('success', 'Success'),
+    ('info', 'Informational'),
+    ('warning', 'Warning'),
+    ('error', 'Error'),
+)
+
+# Bountyhub Definitions
+HACKERONE_ALLOWED_ASSET_TYPES = ["WILDCARD", "DOMAIN", "IP_ADDRESS", "URL"]

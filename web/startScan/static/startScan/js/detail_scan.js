@@ -1039,12 +1039,12 @@ function create_log_element(log) {
 	let logElement = document.createElement("p");
 	innerHTML = `
 	<p>
-	  <p data-bs-toggle="collapse" data-bs-target="#collapse${log.id}">
-		<b>${log.command}</b>
+	  <p data-bs-toggle="collapse" data-bs-target="#collapse${log.id}" class="text-primary">
+		<i class="fe-terminal"></i>${log.command}
 	  </p>
 	</p>`
 	if (log.output != ''){
-		innerHTML += `<div class="collapse" id="collapse${log.id}"><div style="white-space: pre-line" class="card card-body">${log.output}</div></div>`;
+		innerHTML += `<div class="collapse" id="collapse${log.id}"><code style="white-space: pre-line" class="card card-body">${log.output}</code></div>`;
 	}
 	logElement.innerHTML = innerHTML;
 	return logElement;
@@ -1173,15 +1173,15 @@ function add_note_for_subdomain_handler(subdomain_id){
 	var title = document.getElementById('subdomainTodoTitle').value;
 	var description = document.getElementById('subdomainTodoDescription').value;
 	var project = document.querySelector('input[name="current_project"]').value;
-	var scan_id = parseInt(document.getElementById('summary_identifier_val').value);
 
 	data = {
 		'title': title,
 		'description': description,
 		'subdomain_id': subdomain_id,
 		'project': project,
-		'scan_history_id': scan_id
 	}
+
+	console.log(data);
 
 	fetch('/api/add/recon_note/', {
 		method: 'post',
